@@ -1,6 +1,6 @@
 ---
-title: Nick Strayer's Resume"
-author: Nick Strayer
+title: "Jen Bevins's Resume"
+author: Jen Bevins
 date: "`r Sys.Date()`"
 output:
   pagedown::html_resume:
@@ -54,11 +54,10 @@ Contact {#contact}
 
 
 
-- <i class="fa fa-envelope"></i> nick.strayer@gmail.com
-- <i class="fa fa-twitter"></i> NicholasStrayer
-- <i class="fa fa-github"></i> github.com/nstrayer
-- <i class="fa fa-link"></i> [nickstrayer.me](http://nickstrayer.me/)
-- <i class="fa fa-phone"></i> (734) 645-0110
+- <i class="fa fa-envelope"></i> jennifer.jaszewski@gmail.com
+- <i class="fa fa-github"></i> github.com/jjaszews
+- <i class="fa fa-link"></i> [LinkedIn](https://www.linkedin.com/in/jennifer-therese-bevins)
+- <i class="fa fa-phone"></i> (612) 308-2061
 
 
 
