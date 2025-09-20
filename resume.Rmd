@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 library(tidyverse)
 library(glue)
 
+
+
 # Set this to true to have links turned into footnotes at the end of the document
 PDF_EXPORT <- FALSE
 
@@ -29,16 +31,35 @@ source('parsing_functions.R')
 
 # First let's get the data, filtering to only the items tagged as
 # Resume items
-position_data <- read_csv('positions.csv') %>% 
-  filter(in_resume) %>% 
-  mutate(
-    # Build some custom sections by collapsing others
-    section = case_when(
-      section %in% c('research_positions', 'industry_positions') ~ 'positions', 
-      section %in% c('data_science_writings', 'by_me_press') ~ 'writings',
-      TRUE ~ section
+# Data prep (replace your old position_data block with this)
+position_raw <- readr::read_csv("positions.csv", show_col_types = FALSE)
+
+position_data <- position_raw %>%
+  dplyr::mutate(
+    # normalize section labels
+    section0     = stringr::str_to_lower(stringr::str_trim(section)),
+    section_norm = stringr::str_replace_all(section0, "[^a-z0-9]+", "_"),
+
+    # coerce in_resume to logical
+    in_resume = dplyr::case_when(
+      is.logical(in_resume)   ~ in_resume,
+      is.numeric(in_resume)   ~ in_resume == 1,
+      is.character(in_resume) ~ tolower(trimws(in_resume)) %in% c("true","t","yes","y","1"),
+      TRUE ~ FALSE
+    ),
+
+    # collapse to buckets your Rmd expects
+    section = dplyr::case_when(
+      section_norm %in% c("research_positions","industry_positions") ~ "positions",
+      section_norm %in% c(
+        "writings","writing","data_science_writings","by_me_press",
+        "academic_articles","academic_article","academic_writings",
+        "publications","articles","blog_posts"
+      ) ~ "writings",
+      TRUE ~ section_norm
     )
-  ) 
+  ) %>%
+  dplyr::filter(in_resume)
 
 ```
 
@@ -68,13 +89,12 @@ Language Skills {#skills}
 ```{r}
 skills <- tribble(
   ~skill,               ~level,
-  "R",                  5,
-  "Javascript (d3.js)", 4.5,
-  "Python",             4,
-  "Bash",               3.5,
-  "SQL",                3,
-  "C++",                3,
-  "AWK",                3
+  "R",                  3,
+  "SQL",                4,
+   "Spanish",                4,
+   "French",                3,
+   "Italian",                4,
+
 )
 build_skill_bars(skills)
 ```
@@ -84,18 +104,16 @@ build_skill_bars(skills)
 Open Source Contributions {#open-source}
 --------------------------------------------------------------------------------
 
-All projects available at `github.com/nstrayer/<name>`
+All projects available at `github.com/jjaszews`
 
 
-- `shinysense`: R package to use sensor data in Shiny apps
-- `tuftesque`: Hugo theme (behind LiveFreeOrDichotomize.com)
-- `slid3r`: D3 add-on for fully svg slider inputs
+- `montyhall`: R package to create and run a Monty Hall game show simulation
 
 
 More info {#more-info}
 --------------------------------------------------------------------------------
 
-See full CV at nickstrayer.me/cv for more complete list of positions and publications.
+See full CV at https://www.linkedin.com/in/jennifer-therese-bevins for more complete list of positions and publications.
 
 
 Disclaimer {#disclaimer}
@@ -113,13 +131,13 @@ Last updated on `r Sys.Date()`.
 Main
 ================================================================================
 
-Nick Strayer {#title}
+Jen Bevins {#title}
 --------------------------------------------------------------------------------
 
 ```{r}
-intro_text <- "I have made [visualizations viewed by hundreds of thousands of people](https://www.nytimes.com/interactive/2016/08/26/us/college-student-migration.html), [sped up query times for 25 terabytes of data by an average of 4,800 times](https://livefreeordichotomize.com/2019/06/04/using_awk_and_r_to_parse_25tb/), and built [packages for R](https://github.com/nstrayer/shinysense) that let you [do magic](http://nickstrayer.me/dataDayTexas/).
+intro_text <- "I have served the higher education students in Arizona for over a decade through helping increase first-generation students' access to financial resources, developing student services staff who implement trauma-informed practice, and developing leaders and administrators who make data-informed decisions.
 
-Currently searching for a data science position that allows me to build tools using visualization and machine learning to help people explore and understand their data. 
+I am looking to continue growing my data science skills and finding new and innovative ways to apply them to a higher education student services context.
 "
 
 
@@ -151,5 +169,4 @@ Selected Writing {data-icon=newspaper}
 ```{r}
 position_data %>% print_section('writings')
 ```
-
 
